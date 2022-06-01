@@ -1,4 +1,4 @@
-import com.cotrance.test.Window;
+import com.cotrance.test.display.Window;
 
 public class Main
 {
