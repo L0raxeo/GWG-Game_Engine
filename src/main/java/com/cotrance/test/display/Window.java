@@ -5,7 +5,6 @@ import com.cotrance.test.input.MouseListener;
 import com.cotrance.test.scenes.LevelEditorScene;
 import com.cotrance.test.scenes.LevelScene;
 import com.cotrance.test.scenes.Scene;
-import com.cotrance.test.util.Time;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
@@ -17,12 +16,9 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-public class Window
-{
-
-    private final int width;
-    private final int height;
-    private final String title;
+public class Window {
+    private int width, height;
+    private String title;
     private long glfwWindow;
 
     public float r, g, b, a;
@@ -32,74 +28,71 @@ public class Window
 
     private static Scene currentScene;
 
-    private Window()
-    {
+    private Window() {
         this.width = 1920;
         this.height = 1080;
         this.title = "Game Engine";
-
-        r = 1;
-        b = 1;
-        g = 1;
+        r = 0;
+        b = 0;
+        g = 0;
         a = 1;
     }
 
-    public static void changeScene(int newScene)
-    {
-        switch (newScene)
-        {
+    public static void changeScene(int newScene) {
+        switch (newScene) {
             case 0:
                 currentScene = new LevelEditorScene();
                 currentScene.init();
+                currentScene.start();
                 break;
             case 1:
                 currentScene = new LevelScene();
                 currentScene.init();
+                currentScene.start();
                 break;
             default:
-                assert false: "Unknown Scene '" + newScene + "'";
+                assert false : "Unknown scene '" + newScene + "'";
                 break;
         }
     }
 
-    public static Window get()
-    {
-        if (Window.window == null)
-        {
+    public static Window get() {
+        if (Window.window == null) {
             Window.window = new Window();
         }
 
-        return window;
+        return Window.window;
     }
 
-    public void run()
-    {
+    public static Scene getScene() {
+        return get().currentScene;
+    }
+
+    public void run() {
         System.out.println("Hello LWJGL " + Version.getVersion() + "!");
 
         init();
         loop();
 
-        // free the memory
+        // Free the memory
         glfwFreeCallbacks(glfwWindow);
         glfwDestroyWindow(glfwWindow);
 
-        // Terminate GLFW and
+        // Terminate GLFW and the free the error callback
         glfwTerminate();
         Objects.requireNonNull(glfwSetErrorCallback(null)).free();
     }
 
-    public void init()
-    {
+    public void init() {
         // Setup an error callback
         GLFWErrorCallback.createPrint(System.err).set();
 
         // Initialize GLFW
-        if (!glfwInit())
-        {
-            throw new IllegalStateException("Unable to initialize GLFW");
+        if (!glfwInit()) {
+            throw new IllegalStateException("Unable to initialize GLFW.");
         }
 
-        // Configer GLFW
+        // Configure GLFW
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
@@ -107,10 +100,8 @@ public class Window
 
         // Create the window
         glfwWindow = glfwCreateWindow(this.width, this.height, this.title, NULL, NULL);
-
-        if (glfwWindow == NULL)
-        {
-            throw new IllegalStateException("Failed to create a GLFW WIndow.");
+        if (glfwWindow == NULL) {
+            throw new IllegalStateException("Failed to create the GLFW window.");
         }
 
         glfwSetCursorPosCallback(glfwWindow, MouseListener::mousePosCallback);
@@ -126,20 +117,22 @@ public class Window
         // Make the window visible
         glfwShowWindow(glfwWindow);
 
-        // Creates teh GLCapabilities instance and makes the OpenGL bindings available for use
+        // This line is critical for LWJGL's interoperation with GLFW's
+        // OpenGL context, or any context that is managed externally.
+        // LWJGL detects the context that is current in the current thread,
+        // creates the GLCapabilities instance and makes the OpenGL
+        // bindings available for use.
         GL.createCapabilities();
 
         Window.changeScene(0);
     }
 
-    public void loop()
-    {
-        float beginTime = Time.getTime();
+    public void loop() {
+        float beginTime = (float)glfwGetTime();
         float endTime;
         float dt = -1.0f;
 
-        while (!glfwWindowShouldClose(glfwWindow))
-        {
+        while (!glfwWindowShouldClose(glfwWindow)) {
             // Poll events
             glfwPollEvents();
 
@@ -148,16 +141,15 @@ public class Window
 
             if (dt >= 0)
             {
+                glfwSetWindowTitle(glfwWindow, "Game Engine | FPS: " + (1.0f / dt));
                 currentScene.update(dt);
             }
 
             glfwSwapBuffers(glfwWindow);
 
-            endTime = Time.getTime();
-            // delta time
+            endTime = (float) glfwGetTime();
             dt = endTime - beginTime;
             beginTime = endTime;
         }
     }
-
 }

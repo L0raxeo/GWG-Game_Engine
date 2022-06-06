@@ -16,9 +16,19 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
+import org.gradle.internal.os.OperatingSystem
+
 project.ext.lwjglVersion = "3.2.3"
 project.ext.jomlVersion = "1.10.4"
-project.ext.lwjglNatives = "natives-windows"
+
+switch (OperatingSystem.current()) {
+    case OperatingSystem.MAC_OS:
+        project.ext.lwjglNatives = "natives-macos"
+        break
+    case OperatingSystem.WINDOWS:
+        project.ext.lwjglNatives = "natives-windows"
+        break
+}
 
 dependencies {
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
