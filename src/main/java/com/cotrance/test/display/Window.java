@@ -2,6 +2,7 @@ package com.cotrance.test.display;
 
 import com.cotrance.test.input.KeyListener;
 import com.cotrance.test.input.MouseListener;
+import com.cotrance.test.objects.ImGuiLayer;
 import com.cotrance.test.scenes.LevelEditorScene;
 import com.cotrance.test.scenes.LevelScene;
 import com.cotrance.test.scenes.Scene;
@@ -20,6 +21,7 @@ public class Window {
     private int width, height;
     private String title;
     private long glfwWindow;
+    private ImGuiLayer imguiLayer;
 
     public float r, g, b, a;
     private boolean fadeToBlack = false;
@@ -31,10 +33,10 @@ public class Window {
     private Window() {
         this.width = 1920;
         this.height = 1080;
-        this.title = "Game Engine";
-        r = 0;
-        b = 0;
-        g = 0;
+        this.title = "Mario";
+        r = 1;
+        b = 1;
+        g = 1;
         a = 1;
     }
 
@@ -80,7 +82,7 @@ public class Window {
 
         // Terminate GLFW and the free the error callback
         glfwTerminate();
-        Objects.requireNonNull(glfwSetErrorCallback(null)).free();
+        glfwSetErrorCallback(null).free();
     }
 
     public void init() {
@@ -108,6 +110,10 @@ public class Window {
         glfwSetMouseButtonCallback(glfwWindow, MouseListener::mouseButtonCallback);
         glfwSetScrollCallback(glfwWindow, MouseListener::mouseScrollCallback);
         glfwSetKeyCallback(glfwWindow, KeyListener::keyCallBack);
+        glfwSetWindowSizeCallback(glfwWindow, (w, newWidth, newHeight) -> {
+            Window.setWidth(newWidth);
+            Window.setHeight(newHeight);
+        });
 
         // Make the OpenGL context current
         glfwMakeContextCurrent(glfwWindow);
@@ -124,6 +130,11 @@ public class Window {
         // bindings available for use.
         GL.createCapabilities();
 
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        this.imguiLayer = new ImGuiLayer(glfwWindow);
+        this.imguiLayer.initImGui();
+
         Window.changeScene(0);
     }
 
@@ -139,17 +150,32 @@ public class Window {
             glClearColor(r, g, b, a);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            if (dt >= 0)
-            {
-                glfwSetWindowTitle(glfwWindow, "Game Engine | FPS: " + (1.0f / dt));
+            if (dt >= 0) {
                 currentScene.update(dt);
             }
 
+            this.imguiLayer.update(dt, currentScene);
             glfwSwapBuffers(glfwWindow);
 
-            endTime = (float) glfwGetTime();
+            endTime = (float)glfwGetTime();
             dt = endTime - beginTime;
             beginTime = endTime;
         }
+    }
+
+    public static int getWidth() {
+        return get().width;
+    }
+
+    public static int getHeight() {
+        return get().height;
+    }
+
+    public static void setWidth(int newWidth) {
+        get().width = newWidth;
+    }
+
+    public static void setHeight(int newHeight) {
+        get().height = newHeight;
     }
 }

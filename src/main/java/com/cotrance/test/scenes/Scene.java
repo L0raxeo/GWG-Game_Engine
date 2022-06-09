@@ -3,6 +3,7 @@ package com.cotrance.test.scenes;
 import com.cotrance.test.objects.GameObject;
 import com.cotrance.test.renderer.Camera;
 import com.cotrance.test.renderer.Renderer;
+import imgui.ImGui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ public abstract class Scene
     protected Camera camera;
     private boolean isRunning = false;
     protected List<GameObject> gameObjects = new ArrayList<>();
+    protected GameObject activeGameObject = null;
 
     public Scene()
     {
@@ -53,6 +55,26 @@ public abstract class Scene
     public Camera camera()
     {
         return this.camera;
+    }
+
+    public void sceneImgui()
+    {
+        if (activeGameObject != null)
+        {
+            // create window
+            ImGui.begin("Inspector");
+            // call imgui on game object
+            activeGameObject.imgui();
+            // finish
+            ImGui.end();
+        }
+
+        imgui();
+    }
+
+    public void imgui()
+    {
+
     }
 
 }

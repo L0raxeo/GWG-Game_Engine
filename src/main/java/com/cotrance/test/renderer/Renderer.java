@@ -4,6 +4,7 @@ import com.cotrance.test.objects.GameObject;
 import com.cotrance.test.objects.components.SpriteRenderer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Renderer
@@ -31,20 +32,25 @@ public class Renderer
 
         for (RenderBatch batch : batches)
         {
-            if (batch.hasRoom())
+            if (batch.hasRoom() && batch.zIndex() == sprite.gameObject.zIndex())
             {
-                batch.addSprite(sprite);
-                added = true;
-                break;
+                Texture tex = sprite.getTexture();
+                if (tex == null || (batch.hasTexture(tex) || batch.hasTextureRoom()))
+                {
+                    batch.addSprite(sprite);
+                    added = true;
+                    break;
+                }
             }
         }
 
         if (!added)
         {
-            RenderBatch newBatch = new RenderBatch(MAX_BATCH_SIZE);
+            RenderBatch newBatch = new RenderBatch(MAX_BATCH_SIZE, sprite.gameObject.zIndex());
             newBatch.start();
             batches.add(newBatch);
             newBatch.addSprite(sprite);
+            Collections.sort(batches);
         }
     }
 
