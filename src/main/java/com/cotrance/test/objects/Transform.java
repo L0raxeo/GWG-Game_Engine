@@ -49,4 +49,5 @@ public class Transform
         Transform t = (Transform) obj;
         return t.position.equals(this.position) && t.scale.equals(this.scale);
     }
+
 }

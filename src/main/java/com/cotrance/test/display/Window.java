@@ -44,18 +44,18 @@ public class Window {
         switch (newScene) {
             case 0:
                 currentScene = new LevelEditorScene();
-                currentScene.init();
-                currentScene.start();
                 break;
             case 1:
                 currentScene = new LevelScene();
-                currentScene.init();
-                currentScene.start();
                 break;
             default:
                 assert false : "Unknown scene '" + newScene + "'";
                 break;
         }
+
+        currentScene.load();
+        currentScene.init();
+        currentScene.start();
     }
 
     public static Window get() {
@@ -161,6 +161,8 @@ public class Window {
             dt = endTime - beginTime;
             beginTime = endTime;
         }
+
+        currentScene.saveExit();
     }
 
     public static int getWidth() {
@@ -178,4 +180,5 @@ public class Window {
     public static void setHeight(int newHeight) {
         get().height = newHeight;
     }
+
 }

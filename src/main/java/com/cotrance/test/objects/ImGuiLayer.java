@@ -39,7 +39,7 @@ public class ImGuiLayer {
         // Initialize ImGuiIO config
         final ImGuiIO io = ImGui.getIO();
 
-        io.setIniFilename(null); // PARAMETERS: path to file where position/attributes of windows in IMGUI is saved "dir/dir2/imguisave.ini"
+        io.setIniFilename("imgui.ini"); // We don't want to save .ini file
         io.setConfigFlags(ImGuiConfigFlags.NavEnableKeyboard); // Navigation with keyboard
         io.setBackendFlags(ImGuiBackendFlags.HasMouseCursors); // Mouse cursors to display while resizing windows etc.
         io.setBackendPlatformName("imgui_java_impl_glfw");
@@ -161,9 +161,9 @@ public class ImGuiLayer {
         // Use freetype instead of stb_truetype to build a fonts texture
         ImGuiFreeType.buildFontAtlas(fontAtlas, ImGuiFreeType.RasterizerFlags.LightHinting);
 
-        //Method initializes LWJGL3 renderer.
-        //This method SHOULD be called after you've initialized your ImGui configuration (fonts and so on).
-        //ImGui context should be created as well.
+        // Method initializes LWJGL3 renderer.
+        // This method SHOULD be called after you've initialized your ImGui configuration (fonts and so on).
+        // ImGui context should be created as well.
         imGuiGl3.init("#version 330 core");
     }
 
@@ -211,4 +211,5 @@ public class ImGuiLayer {
         imGuiGl3.dispose();
         ImGui.destroyContext();
     }
+
 }
