@@ -1,6 +1,6 @@
 package com.cotrance.test.util;
 
-import com.cotrance.test.objects.Component;
+import com.cotrance.test.objects.components.Component;
 import com.cotrance.test.objects.GameObject;
 import com.cotrance.test.objects.Transform;
 import com.google.gson.*;

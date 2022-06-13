@@ -1,6 +1,8 @@
 package com.cotrance.test.objects;
 
 import com.cotrance.test.display.Window;
+import com.cotrance.test.input.KeyListener;
+import com.cotrance.test.input.MouseListener;
 import com.cotrance.test.scenes.Scene;
 import imgui.*;
 import imgui.callbacks.ImStrConsumer;
@@ -97,6 +99,10 @@ public class ImGuiLayer {
             io.setKeyShift(io.getKeysDown(GLFW_KEY_LEFT_SHIFT) || io.getKeysDown(GLFW_KEY_RIGHT_SHIFT));
             io.setKeyAlt(io.getKeysDown(GLFW_KEY_LEFT_ALT) || io.getKeysDown(GLFW_KEY_RIGHT_ALT));
             io.setKeySuper(io.getKeysDown(GLFW_KEY_LEFT_SUPER) || io.getKeysDown(GLFW_KEY_RIGHT_SUPER));
+
+            if (!io.getWantCaptureKeyboard()) {
+                KeyListener.keyCallBack(w, key, scancode, action, mods);
+            }
         });
 
         glfwSetCharCallback(glfwWindow, (w, c) -> {
@@ -119,6 +125,10 @@ public class ImGuiLayer {
             if (!io.getWantCaptureMouse() && mouseDown[1]) {
                 ImGui.setWindowFocus(null);
             }
+
+            if (!io.getWantCaptureMouse()) {
+                MouseListener.mouseButtonCallback(w, button, action, mods);
+            }
         });
 
         glfwSetScrollCallback(glfwWindow, (w, xOffset, yOffset) -> {
@@ -137,7 +147,11 @@ public class ImGuiLayer {
             @Override
             public String get() {
                 final String clipboardString = glfwGetClipboardString(glfwWindow);
-                return Objects.requireNonNullElse(clipboardString, "");
+                if (clipboardString != null) {
+                    return clipboardString;
+                } else {
+                    return "";
+                }
             }
         });
 

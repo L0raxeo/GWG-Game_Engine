@@ -1,6 +1,6 @@
 package com.cotrance.test.scenes;
 
-import com.cotrance.test.objects.Component;
+import com.cotrance.test.objects.components.Component;
 import com.cotrance.test.objects.GameObject;
 import com.cotrance.test.renderer.Camera;
 import com.cotrance.test.renderer.Renderer;
@@ -128,11 +128,26 @@ public abstract class Scene
 
         if (!inFile.equals(""))
         {
+            int maxGoId = -1;
+            int maxCompId = -1;
             GameObject[] objects = gson.fromJson(inFile, GameObject[].class);
 
             for (GameObject object : objects)
+            {
                 addGameObjectToScene(object);
 
+                for (Component c : object.getAllComponents())
+                    if (c.getUid() > maxCompId)
+                        maxCompId = c.getUid();
+
+                if (object.getUid() > maxGoId)
+                    maxGoId = object.getUid();
+            }
+
+            maxGoId++;
+            maxCompId++;
+            GameObject.init(maxGoId);
+            Component.init(maxCompId);
             this.levelLoaded = true;
         }
     }

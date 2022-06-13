@@ -1,7 +1,5 @@
 package com.cotrance.test.objects.components;
 
-import com.cotrance.test.objects.Component;
-
 public class FontRenderer extends Component
 {
 

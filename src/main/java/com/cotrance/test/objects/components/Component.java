@@ -1,5 +1,6 @@
-package com.cotrance.test.objects;
+package com.cotrance.test.objects.components;
 
+import com.cotrance.test.objects.GameObject;
 import imgui.ImGui;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -9,6 +10,11 @@ import java.lang.reflect.Modifier;
 
 public abstract class Component
 {
+
+    // component class in general
+    private static int ID_COUNTER = 0;
+    // associated with individual components/objects
+    private int uid = -1;
 
     public transient GameObject gameObject = null;
 
@@ -83,6 +89,22 @@ public abstract class Component
         {
             e.printStackTrace();
         }
+    }
+
+    public void generateId()
+    {
+        if (this.uid == -1)
+            this.uid = ID_COUNTER++;
+    }
+
+    public int getUid()
+    {
+        return this.uid;
+    }
+
+    public static void init(int maxId)
+    {
+        ID_COUNTER = maxId;
     }
 
 }

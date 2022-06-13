@@ -1,16 +1,16 @@
 package com.cotrance.test.scenes;
 
 import com.cotrance.test.objects.GameObject;
+import com.cotrance.test.objects.Prefabs;
 import com.cotrance.test.objects.Transform;
-import com.cotrance.test.objects.components.RigidBody;
-import com.cotrance.test.objects.components.Sprite;
-import com.cotrance.test.objects.components.SpriteRenderer;
-import com.cotrance.test.objects.components.SpriteSheet;
+import com.cotrance.test.objects.components.*;
 import com.cotrance.test.renderer.Camera;
+import com.cotrance.test.renderer.DebugDraw;
 import com.cotrance.test.util.AssetPool;
 import imgui.ImGui;
 import imgui.ImVec2;
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 public class LevelEditorScene extends Scene
@@ -19,6 +19,8 @@ public class LevelEditorScene extends Scene
     private GameObject obj1;
     private SpriteSheet sprites;
     private SpriteRenderer obj1Sprite;
+
+    private MouseControls mouseControls = new MouseControls();
 
     public LevelEditorScene()
     {
@@ -32,9 +34,12 @@ public class LevelEditorScene extends Scene
         this.camera = new Camera(new Vector2f(-250, 0));
         sprites = AssetPool.getSpriteSheet("assets/images/spritesheets/decorationsAndBlocks.png");
 
+        DebugDraw.addLine2D(new Vector2f(0, 0), new Vector2f(800, 800), new Vector3f(1, 0, 0));
+
         if (levelLoaded)
         {
             this.activeGameObject = gameObjects.get(0);
+            this.activeGameObject.addComponent(new RigidBody());
             return;
         }
 
@@ -68,11 +73,18 @@ public class LevelEditorScene extends Scene
         AssetPool.getTexture("assets/images/blendImage2.png");
     }
 
+    float t = 0.0f;
     @Override
     public void update(float dt)
     {
-        for (GameObject go : this.gameObjects)
-        {
+        mouseControls.update(dt);
+
+        float x = ((float)Math.sin(t) * 200.0f) + 600;
+        float y = ((float)Math.cos(t) * 200.0f) + 400;
+        t += 0.05f;
+        DebugDraw.addLine2D(new Vector2f(600, 400), new Vector2f(x, y), new Vector3f(0, 0, 1), 10);
+
+        for (GameObject go : this.gameObjects) {
             go.update(dt);
         }
 
@@ -95,15 +107,19 @@ public class LevelEditorScene extends Scene
         for (int i=0; i < sprites.size(); i++)
         {
             Sprite sprite = sprites.getSprite(i);
-            float spriteWidth = sprite.getWidth() * 4;
-            float spriteHeight = sprite.getHeight() * 4;
+            float spriteWidth = sprite.getWidth() * 2;
+            float spriteHeight = sprite.getHeight() * 2;
             int id = sprite.getTexId();
             Vector2f[] texCoords = sprite.getTexCoords();
 
             ImGui.pushID(i);
 
-            if (ImGui.imageButton(id, spriteWidth, spriteHeight, texCoords[0].x, texCoords[0].y, texCoords[2].x, texCoords[2].y))
-                System.out.println("Button " + i + "clicked");
+            if (ImGui.imageButton(id, spriteWidth, spriteHeight, texCoords[2].x, texCoords[0].y, texCoords[0].x, texCoords[2].y))
+            {
+                GameObject object = Prefabs.generateSpriteObject(sprite, spriteWidth, spriteHeight);
+                // Attach object to mouse cursor
+                mouseControls.pickupObject(object);
+            }
 
             ImGui.popID();
 

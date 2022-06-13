@@ -1,6 +1,5 @@
 package com.cotrance.test.objects.components;
 
-import com.cotrance.test.objects.Component;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 

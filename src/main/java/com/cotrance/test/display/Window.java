@@ -3,6 +3,7 @@ package com.cotrance.test.display;
 import com.cotrance.test.input.KeyListener;
 import com.cotrance.test.input.MouseListener;
 import com.cotrance.test.objects.ImGuiLayer;
+import com.cotrance.test.renderer.DebugDraw;
 import com.cotrance.test.scenes.LevelEditorScene;
 import com.cotrance.test.scenes.LevelScene;
 import com.cotrance.test.scenes.Scene;
@@ -147,10 +148,13 @@ public class Window {
             // Poll events
             glfwPollEvents();
 
+            DebugDraw.beginFrame();
+
             glClearColor(r, g, b, a);
             glClear(GL_COLOR_BUFFER_BIT);
 
             if (dt >= 0) {
+                DebugDraw.draw();
                 currentScene.update(dt);
             }
 

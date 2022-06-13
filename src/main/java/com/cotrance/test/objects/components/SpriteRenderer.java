@@ -1,6 +1,5 @@
 package com.cotrance.test.objects.components;
 
-import com.cotrance.test.objects.Component;
 import com.cotrance.test.objects.Transform;
 import com.cotrance.test.renderer.Texture;
 import imgui.ImGui;
