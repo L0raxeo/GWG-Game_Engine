@@ -68,7 +68,7 @@ public class Window {
     }
 
     public static Scene getScene() {
-        return get().currentScene;
+        return Window.currentScene;
     }
 
     public void run() {

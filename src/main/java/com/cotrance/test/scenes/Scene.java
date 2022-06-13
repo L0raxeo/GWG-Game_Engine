@@ -69,13 +69,9 @@ public abstract class Scene
 
     public void sceneImgui()
     {
-        if (activeGameObject != null)
-        {
-            // create window
+        if (activeGameObject != null) {
             ImGui.begin("Inspector");
-            // call imgui on game object
             activeGameObject.imgui();
-            // finish
             ImGui.end();
         }
 
